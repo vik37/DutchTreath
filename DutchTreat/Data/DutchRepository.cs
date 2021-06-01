@@ -46,6 +46,23 @@ namespace Dutch.Data
         {
             return _ctx.SaveChanges() > 0;
         }
+        public IEnumerable<Order> GetAllOrdersByUser(string username, bool includeItems)
+        {
+            if (includeItems)
+            {
+                return _ctx.Orders
+                    .Where(o => o.User.UserName == username)
+                    .Include(o => o.Items)
+                    .ThenInclude(o => o.Product)
+                    .ToList();
+            }
+            else
+            {
+                return _ctx.Orders
+                     .Where(o => o.User.UserName == username)
+                     .ToList();
+            }
+        }
 
         public IEnumerable<Order> GetAllOrders(bool includeItems)
         {
@@ -63,12 +80,12 @@ namespace Dutch.Data
             }
         }
 
-        public Order GetOrderById(int id)
+        public Order GetOrderById(string username,int id)
         {
             return _ctx.Orders
                    .Include(o => o.Items)
                    .ThenInclude(o => o.Product)
-                   .Where(o => o.Id == id)
+                   .Where(o => o.Id == id && o.User.UserName == username)
                    .FirstOrDefault();
         }
 
@@ -82,6 +99,6 @@ namespace Dutch.Data
             return _ctx.SaveChanges() > 0;
         }
 
-       
+        
     }
 }

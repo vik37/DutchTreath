@@ -31,11 +31,11 @@ namespace Dutch
         private static void RunSeeding(IHost host)
         {
             var scopeFactory = host.Services.GetService<IServiceScopeFactory>();
-            using(var scope = scopeFactory.CreateScope())
+            using (var scope = scopeFactory.CreateScope()) 
             {
                 var seeder = scope.ServiceProvider.GetService<DutchSeeder>();
-                seeder.Seed();
-            }        
+                seeder.SeedAsync();
+            }       
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

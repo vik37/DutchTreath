@@ -1,6 +1,7 @@
 ﻿using Dutch.Data;
 using Dutch.Services;
 using Dutch.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -51,6 +52,7 @@ namespace Dutch.Controllers
             ViewBag.Title = "About Us";
             return View();
         }
+        [Authorize]
         public IActionResult Shop()
         {
             //var result = from p in _context.Products

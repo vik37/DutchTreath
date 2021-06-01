@@ -2,6 +2,9 @@
 using Dutch.Data;
 using Dutch.Data.Entities;
 using Dutch.ViewModels;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,6 +15,7 @@ using System.Threading.Tasks;
 namespace Dutch.Controllers
 {
     [Route("/api/orders/{orderid}/items")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class OrderItemsController : Controller
     {
         private readonly IDutchRepository _repo;
@@ -26,14 +30,14 @@ namespace Dutch.Controllers
         [HttpGet]
         public IActionResult Get(int orderId)
         {
-            var order = _repo.GetOrderById(orderId);
+            var order = _repo.GetOrderById(User.Identity.Name,orderId);
             if (order != null) return Ok(_mapper.Map<IEnumerable<OrderItem>, IEnumerable<OrderItemViewModel>>(order.Items));
             return NotFound();
         }
         [HttpGet("{id}")]
         public IActionResult Get(int orderId, int id)
         {
-            var order = _repo.GetOrderById(orderId);
+            var order = _repo.GetOrderById(User.Identity.Name,orderId);
             if(order != null)
             {
                 var item = order.Items.Where(i => i.Id == id).FirstOrDefault();

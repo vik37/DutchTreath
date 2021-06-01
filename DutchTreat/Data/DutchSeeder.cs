@@ -1,5 +1,6 @@
 ﻿using Dutch.Data.Entities;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,15 +14,32 @@ namespace Dutch.Data
     {
         private readonly DutchContext _ctx;
         private readonly IWebHostEnvironment _env;
-
-        public DutchSeeder(DutchContext ctx, IWebHostEnvironment env)
+        private readonly UserManager<StoreUser> _userManager;
+        public DutchSeeder(DutchContext ctx, IWebHostEnvironment env, UserManager<StoreUser> userManager)
         {
             _ctx = ctx;
             _env = env;
+            _userManager = userManager;
         }
-        public void Seed()
+        public void SeedAsync()
         {
             _ctx.Database.EnsureCreated();
+            StoreUser user =  _userManager.FindByEmailAsync("viktor@dutchtreat.com").Result;
+            if(user == null)
+            {
+                user = new StoreUser()
+                {
+                    FirstName = "Viktor",
+                    LastName = "Zafirovski",
+                    Email = "viktor@dutchtreat.com",
+                    UserName = "viktor@dutchtreat.com"
+                };
+                var result =  _userManager.CreateAsync(user, "Vik_goa02!").Result;
+                if(result != IdentityResult.Success)
+                {
+                    throw new InvalidOperationException("Could not create new user in seeder");
+                }
+            }
             if (!_ctx.Products.Any())
             {
                 var filePath = Path.Combine(_env.ContentRootPath,"Data/art.json");
@@ -40,7 +58,8 @@ namespace Dutch.Data
                             Quantity = 5,
                             UnitPrice = products.First().Price
                         }
-                    }
+                    },
+                    User = user
                 };
                 _ctx.Orders.Add(order);
                 _ctx.SaveChanges();

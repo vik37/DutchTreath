@@ -10,5 +10,10 @@
       "Default": "Information",
       "Microsoft": "Warning"
     }
+  },
+  "Token": {
+    "key": "jlkjlkjklfggathgjkhkj",
+    "Issuer": "http://localhost:19789",
+    "Audience": "http://localhost:19789"
   }
 }

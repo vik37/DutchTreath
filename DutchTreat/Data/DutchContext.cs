@@ -1,4 +1,5 @@
 ﻿using Dutch.Data.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -8,9 +9,10 @@ using System.Threading.Tasks;
 
 namespace Dutch.Data
 {
-    public class DutchContext : DbContext
+    public class DutchContext : IdentityDbContext<StoreUser>
     {
         private readonly IConfiguration _config;
+       
         public DutchContext(IConfiguration config)
         {
             _config = config;
@@ -24,17 +26,17 @@ namespace Dutch.Data
 
             optionsBuilder.UseSqlServer(_config["ConnectionStrings:DutchContextDb"]);
         }
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Order>()
-                .HasData(new Order()
-                {
-                    Id = 1,
-                    OrderDate = DateTime.UtcNow,
-                    OrderNumber = "12345"
-                });
-        }
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    base.OnModelCreating(modelBuilder);
+        //    modelBuilder.Entity<Order>()
+        //        .HasData(new Order()
+        //        {
+        //            Id = 1,
+        //            OrderDate = DateTime.UtcNow,
+        //            OrderNumber = "12345"
+        //        });
+        //}
     }
 
 }
